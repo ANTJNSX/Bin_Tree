@@ -18,7 +18,7 @@ typedef struct node {
 
     // Tree functions
 node *createNode(int value) {
-    node* result = malloc(sizeof(value));
+    node* result = malloc(sizeof(node));
     if (result != NULL) {
         result->left = NULL;
         result->right = NULL;
@@ -27,33 +27,56 @@ node *createNode(int value) {
     return result;
 }
 
-node *insertNode(node *root, node *newNode) {
+int insertNode(node *root, node *newNode) {
     if ((root != NULL) && (newNode != NULL)) { // check if root 
         int rootVal = root->value;
         int nodeVal = newNode->value;
         if (rootVal == newNode->value) {
-            return root; // handle root before adding 
+            return root->value; // handle root before adding 
         }
         
         if (nodeVal > rootVal) { // check right
-            if (root->right == NULL) {
+            if ((root->right == NULL) || (nodeVal == rootVal)) {
                 root->right = newNode; 
                 return newNode->value;
             }
-            instertNode(newNode, root->right);
+            insertNode(newNode, root->right);
         }
 
         if (nodeVal < rootVal) { // check left
-            if (root->left == NULL) {
+            if ((root->left == NULL) || (nodeVal == rootVal)) {
                 root->left = newNode; 
                 return newNode->value;
             }
-            instertNode(newNode, root->left);
+            insertNode(newNode, root->left);
+        }
+    }
+}
+
+
+int getValue(node *root, int value) {
+    if ((root != NULL) ) { // check if root 
+        int rootVal = root->value;
+        if (rootVal == value) {
+            return value; // handle root before adding 
+        }
+        
+        if (value > rootVal) { // check right
+            if (root->right == NULL) {
+                return value;
+            }
+            getValue(root->right, value);
+        }
+
+        if (value < rootVal) { // check left
+            if (root->left == NULL) {
+                return value;
+            }
+            getValue(root->left, value);
         }
 
     }
 
-    return newNode;
 }
 
 void freeBST(node* root) {
@@ -75,8 +98,10 @@ int main() {
     node *rootCh = createNode(5);
 
     insertNode(root, rootCh);
+    
+    int fiveexists = getValue(root, 5);
 
-    printf("%d\n", root->left->value);
+    printf("%d\n", fiveexists);
 
     freeBST(root);
     return 0;
