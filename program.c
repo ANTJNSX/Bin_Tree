@@ -27,6 +27,22 @@ node *createNode(int value) {
     return result;
 }
 
+void insert(node* tree, int value) {
+    if (tree != NULL) {
+        if (value > tree->value) {
+            if (tree->right == NULL)
+                tree->right = createNode(value);
+            else
+                insert(tree->right, value);
+        } else if (value < tree->value) {
+            if (tree->left == NULL)
+                tree->left = createNode(value);
+            else
+                insert(tree->left, value);
+        }
+    }
+}
+
 int insertNode(node *root, node *newNode) {
     if ((root != NULL) && (newNode != NULL)) { // check if root 
         int rootVal = root->value;
@@ -40,7 +56,7 @@ int insertNode(node *root, node *newNode) {
                 root->right = newNode; 
                 return newNode->value;
             }
-            insertNode(newNode, root->right);
+            insertNode(root->right, newNode);
         }
 
         if (nodeVal < rootVal) { // check left
@@ -48,7 +64,7 @@ int insertNode(node *root, node *newNode) {
                 root->left = newNode; 
                 return newNode->value;
             }
-            insertNode(newNode, root->left);
+            insertNode(root->right, newNode);
         }
     }
 }
@@ -79,6 +95,27 @@ int getValue(node *root, int value) {
 
 }
 
+int getSize(node *root) {
+    if (root != NULL) {
+        
+        int sz = 1;
+        
+        if (root->right != NULL) {
+            sz += getSize(root->right);
+        }
+
+        if (root->left != NULL) {
+            sz += getSize(root->left);
+        }
+
+        return sz;
+
+    }
+
+    return 0;
+
+}
+
 void freeBST(node* root) {
     if (root == NULL) {
         return;
@@ -102,6 +139,9 @@ int main() {
     int fiveexists = getValue(root, 5);
 
     printf("%d\n", fiveexists);
+
+    int sz = getSize(root);
+    printf("%d\n", sz);
 
     freeBST(root);
     return 0;
