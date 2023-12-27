@@ -116,6 +116,25 @@ int getSize(node *root) {
 
 }
 
+int maxDepth(node *root) {
+    if (root != NULL) {
+        
+        int leftDepth = 0;
+        int rightDepth = 0;
+        
+        if (root->right != NULL) {
+            rightDepth += maxDepth(root->right);
+        }
+
+        if (root->left != NULL) {
+            leftDepth += maxDepth(root->left);
+        }
+        
+        if (rightDepth > leftDepth) return rightDepth + 1; else return leftDepth + 1;
+
+    }
+}
+
 void freeBST(node* root) {
     if (root == NULL) {
         return;
@@ -128,22 +147,40 @@ void freeBST(node* root) {
         
 
 int main() {
-    node *root = createNode(10); // initialize tree basically
+    node *root = createNode(4); // initialize tree basically
  
-    printf("%d\n", root->value);
+    printf("Printed 'root->value': %d\n", root->value);
    
-    node *rootCh = createNode(5);
+        // CreateNode test
+
+    node *rootCh = createNode(2);
 
     insertNode(root, rootCh);
     
+        // getValue test
+
     int fiveexists = getValue(root, 5);
 
-    printf("%d\n", fiveexists);
+    printf("Get value test(5): %d\n", fiveexists);
+
+        // getSize test
 
     int sz = getSize(root);
-    printf("%d\n", sz);
+    printf("BST Size: %d\n", sz);
 
+        // maxDepth test
+
+    printf("Number 1-9 inserted\n");
+    for (int i = 0; i < 10; i++) {
+        insert(root, i);
+    }
+
+    printf("Max depth after insertion: %d\n", maxDepth(root));
+
+        // free tree
+    
     freeBST(root);
+    printf("BST Freed\n");
     return 0;
 }
 
