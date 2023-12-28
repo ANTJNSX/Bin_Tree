@@ -1,13 +1,12 @@
 /*
  * Author: Anton Jonsson
  * 
- * Simple bst implementation without malloc for safety
- *
  */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <malloc.h>
+#include <string.h>
 
     // Tree attributes
 typedef struct node {
@@ -95,25 +94,9 @@ int getValue(node *root, int value) {
 
 }
 
-int getSize(node *root) {
-    if (root != NULL) {
-        
-        int sz = 1;
-        
-        if (root->right != NULL) {
-            sz += getSize(root->right);
-        }
-
-        if (root->left != NULL) {
-            sz += getSize(root->left);
-        }
-
-        return sz;
-
-    }
-
-    return 0;
-
+int getSize(node *root) {  // mmh yummy recursion...
+    if (root == NULL) return 0;
+    return getSize(root->left) + getSize(root->right) + 1;
 }
 
 int maxDepth(node *root) {
@@ -135,6 +118,39 @@ int maxDepth(node *root) {
     }
 }
 
+char *toString(node *root) {
+ if (root == NULL) {
+        return strdup("");
+    }
+
+    char *leftStr = toString(root->left);  // Process left subtree
+    char *rightStr = toString(root->right); // Process right subtree
+
+    // Calculate the length of the string needed
+    int len = strlen(leftStr) + strlen(rightStr) + 20; // 20 for root value and separators
+    char *res = malloc(len);
+    if (res == NULL) {
+        // Handle memory allocation failure
+        free(leftStr);
+        free(rightStr);
+        return NULL;
+    }
+
+    // If left subtree is not empty, append a comma and space after it
+    if (*leftStr) {
+        strcat(leftStr, ", ");
+    }
+
+    // Format the string: left subtree, root value, right subtree
+    sprintf(res, "%s%d%s%s", leftStr, root->value, (*rightStr) ? ", " : "", rightStr);
+
+    // Free the memory allocated in recursive calls
+    free(leftStr);
+    free(rightStr);
+
+    return res;
+}
+
 void freeBST(node* root) {
     if (root == NULL) {
         return;
@@ -145,7 +161,6 @@ void freeBST(node* root) {
     free(root);
 }
         
-
 int main() {
     node *root = createNode(4); // initialize tree basically
  
@@ -176,6 +191,10 @@ int main() {
     }
 
     printf("Max depth after insertion: %d\n", maxDepth(root));
+
+        // toString test
+
+    printf("BST in order to string: %s\n", toString(root));
 
         // free tree
     
